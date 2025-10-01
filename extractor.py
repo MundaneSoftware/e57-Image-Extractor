@@ -37,6 +37,10 @@ async def process_e57_file(file_path, output_path, coords_file_path, progress_ba
     e57_file = E57(str(file_path))
     spherical_representations = extract_spherical_representations(e57_file)
     num_scans = e57_file.scan_count
+    
+    # Get e57 name to add to image name
+    filename = os.path.basename(file_path)
+    e57name , _ = os.path.splitext(filename)
 
     for scan_index in range(num_scans):
         # Retrieve scan metadata
@@ -44,7 +48,7 @@ async def process_e57_file(file_path, output_path, coords_file_path, progress_ba
         translation = scan_header.translation
         rotation = scan_header.rotation
         guid = scan_header['guid'].value()
-        name = scan_header['name'].value()
+        name = e57name + '-' + scan_header['name'].value()
 
         # Process spherical representation if it exists
         spherical_representation = spherical_representations.get(guid)
